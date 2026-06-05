@@ -1,2 +1,2 @@
+pub mod offline_checker;
 pub mod repository;
-pub mod offline_checkers;

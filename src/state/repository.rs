@@ -11,10 +11,12 @@ pub async fn load_all_servers(
         let db_id: i64 = row.get(0)?;
         let server_id: String = db_id.to_string();
 
-        let mut state = ServerState::default();
-        state.server_id = server_id;
-        state.name = row.get(1)?;
-        state.status = HealthStatus::Offline;
+        let state = ServerState {
+            server_id,
+            name: row.get(1)?,
+            status: HealthStatus::Offline,
+            ..Default::default()
+        };
 
         servers.push(state);
     }
@@ -29,7 +31,6 @@ pub async fn add_server(db: &Connection, name: &str) -> Result<i64, Box<dyn std:
     )
     .await?;
 
-    // Obtenemos el último ID insertado por esta conexión
     let new_id = db.last_insert_rowid();
     Ok(new_id)
 }
@@ -44,7 +45,7 @@ pub async fn delete_server(
 
     db.execute(
         "DELETE FROM servers WHERE id = ?1",
-        libsql::params![db_id], // Pasamos el número puro
+        libsql::params![db_id],
     )
     .await?;
 

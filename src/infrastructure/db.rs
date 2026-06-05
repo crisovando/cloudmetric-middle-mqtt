@@ -33,5 +33,21 @@ pub async fn init_db_with_migrations(conn: &Connection) -> Result<(), Box<dyn st
     )
     .await?;
 
+    conn.execute(
+        "
+        CREATE TABLE IF NOT EXISTS alerts (
+            id TEXT PRIMARY KEY,
+            server_id TEXT NOT NULL,
+            server_name TEXT NOT NULL,
+            metric TEXT NOT NULL,
+            value REAL,
+            timestamp INTEGER NOT NULL,
+            resolved_at INTEGER
+        );
+        ",
+        (),
+    )
+    .await?;
+
     Ok(())
 }

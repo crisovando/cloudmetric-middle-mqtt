@@ -1,19 +1,36 @@
-pub const ROOT_TOPIC: &str = "cloudmetric";
-
-pub const HEALTH_WILDCARD: &str = "cloudmetric/simulator/health/+";
-
-pub const CONFIG_TOPIC: &str = "cloudmetric/simulator/config";
-
-pub const FLEET_TOPIC: &str = "cloudmetric/simulator/fleet";
-
-pub fn control_topic(server_id: &str) -> String {
-    format!("{ROOT_TOPIC}/simulator/control/{server_id}")
+#[derive(Debug, Clone)]
+pub struct Topics {
+    pub prefix: String,
 }
 
-pub fn parse_health_topic(topic: &str) -> Option<String> {
-    let parts: Vec<&str> = topic.split('/').collect();
-    match parts.as_slice() {
-        ["cloudmetric", "simulator", "health", server_id] => Some(server_id.to_string()),
-        _ => None,
+impl Topics {
+    pub fn new(prefix: String) -> Self {
+        Self { prefix }
+    }
+
+    pub fn health_wildcard(&self) -> String {
+        format!("{}/simulator/health/+", self.prefix)
+    }
+
+    pub fn config_topic(&self) -> String {
+        format!("{}/simulator/config", self.prefix)
+    }
+
+    pub fn fleet_topic(&self) -> String {
+        format!("{}/simulator/fleet", self.prefix)
+    }
+
+    pub fn control_topic(&self, server_id: &str) -> String {
+        format!("{}/simulator/control/{}", self.prefix, server_id)
+    }
+
+    pub fn parse_health_topic(&self, topic: &str) -> Option<String> {
+        let parts: Vec<&str> = topic.split('/').collect();
+        match parts.as_slice() {
+            [prefix, "simulator", "health", server_id] if *prefix == self.prefix => {
+                Some(server_id.to_string())
+            }
+            _ => None,
+        }
     }
 }

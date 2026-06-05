@@ -1,3 +1,4 @@
+pub mod alert;
 pub mod health;
 pub mod status;
 pub mod state;

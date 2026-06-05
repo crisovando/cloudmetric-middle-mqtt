@@ -1,3 +1,4 @@
+pub mod alerts;
 pub mod servers;
 
 use crate::app_state::AppState;
@@ -11,4 +12,5 @@ pub fn build_api_router(_state: Arc<AppState>) -> Router<Arc<AppState>> {
             "/servers/{server_id}",
             axum::routing::delete(servers::delete_server),
         )
+        .route("/alerts", axum::routing::get(alerts::get_alerts))
 }
